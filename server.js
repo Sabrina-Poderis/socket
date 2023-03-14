@@ -12,8 +12,20 @@ app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`)
 })
 
-server.on("connection", (socket) => {
-  console.log('🧦 Client connection: ', socket)
+server.on("connection", (client) => {
+  console.log('🧦 Client connection: ', client.id)
+
+  client.on("document", (document) => {
+    console.log('🧦 Recieve document: ', document)
+    let positionInQueue = 10;
+    let delayQueue = 3000;
+
+    setInterval(() => {
+      for(let count = positionInQueue; count >= 0; count--){
+        server.emit('positionInQueue', count--)
+      }
+    }, delayQueue)
+  });
 });
 
 http.listen(3000, () => {
