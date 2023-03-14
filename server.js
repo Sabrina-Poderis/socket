@@ -1,13 +1,19 @@
-const app = require('express')()
-const http = require('http').createServer(app);
-const io = require("socket.io")(http);
+// Imports
+const express = require("express");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
-app.get('/', (req,res) => {
+// Server
+const app = express();
+const http = createServer(app);
+const server = new Server(http);
+
+app.get('/', (req, res) => {
   res.sendFile(`${__dirname}/index.html`)
 })
 
-io.on("connection", (socket) => {
-  console.log('👤 Client connection: ', socket)
+server.on("connection", (socket) => {
+  console.log('🧦 Client connection: ', socket)
 });
 
 http.listen(3000, () => {
