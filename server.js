@@ -1,4 +1,5 @@
 const SERVER_PORT = 3001;
+
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
@@ -13,18 +14,25 @@ const server = new Server(http, {
   }
 });
 
-var positionInQueue = 10;
+
+const randomDelay = (min=1000, max=5000) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 server.on("connection", (socket) => {
+  var positionInQueue = 10;
   console.log("🧦 Client connect");
 
-  socket.on("document", (document) => {
-    console.log("🧦 Document: ", document);
-
-    positionInQueue--
-
-    server.emit('positionInQueue', positionInQueue)
-    console.log(`🧦 [${document}] Send position in queue: ${positionInQueue}`)
+  socket.on("documentPatient", (documentPatient) => {
+    if(positionInQueue >= 0){
+      setInterval(() => {
+        if(positionInQueue >= 0){
+          console.log(`🧦 [${documentPatient}]: Posição ${positionInQueue}`);
+          socket.emit('positionInQueue', positionInQueue);
+          positionInQueue--
+        }
+      }, randomDelay(1000, 3000));
+    }
   });
 
   socket.on("connect_error", (error) => {
