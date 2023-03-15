@@ -1,3 +1,4 @@
+const SERVER_PORT = 6666;
 const PORT = 3001;
 const express = require("express");
 const { createServer } = require("http");
@@ -6,7 +7,7 @@ const { io } = require("socket.io-client");
 // Server
 const app = express();
 const http = createServer(app);
-const client = io('http://localhost:3000');
+const client = io(`http://localhost:${SERVER_PORT}`);
 
 const sleep = (ms)=> {
   var unixtime_ms = new Date().getTime();
@@ -17,8 +18,6 @@ var positionInQueue = 20
 const document = '12345678'
 
 client.on("connect", () => {
-  console.log('👤 Client connection: ', client.id);
-  
   do{
     client.emit('document', document)
     console.log('👤 Send document: ', document)
@@ -35,5 +34,3 @@ client.on("positionInQueue", (position) => {
 http.listen(PORT, () => {
   console.log(`👤 Client server listening on http://localhost:${PORT}`)  
 })
-
-
