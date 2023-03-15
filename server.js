@@ -1,4 +1,4 @@
-// Imports
+const PORT = 3000;
 const express = require("express");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
@@ -8,26 +8,21 @@ const app = express();
 const http = createServer(app);
 const server = new Server(http);
 
-app.get('/', (req, res) => {
-  res.sendFile(`${__dirname}/index.html`)
-})
+var positionInQueue = 20;
 
 server.on("connection", (client) => {
   console.log('🧦 Client connection: ', client.id)
-
-  client.on("document", (document) => {
-    console.log('🧦 Recieve document: ', document)
-    let positionInQueue = 10;
-    let delayQueue = 3000;
-
-    setInterval(() => {
-      for(let count = positionInQueue; count >= 0; count--){
-        server.emit('positionInQueue', count--)
-      }
-    }, delayQueue)
-  });
 });
 
-http.listen(3000, () => {
-  console.log('🧦 Socket server listening on http://localhost:3000')  
+server.on("document", (document) => {
+  console.log('🧦 Recieve document: ', document)
+
+  positionInQueue--
+
+  server.emit('positionInQueue', positionInQueue)
+  console.log(`🧦 [${document}] Send position in queue: ${positionInQueue}`)
+});
+
+http.listen(PORT, () => {
+  console.log(`🧦 Socket server listening on http://localhost:${PORT}`)  
 })
